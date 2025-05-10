@@ -1,19 +1,21 @@
+
 import streamlit as st
 import joblib
+
 
 model = joblib.load('model/sentiment_model.pkl')
 vectorizer = joblib.load('model/vectorizer.pkl')
 
-st.title('Tweet Mood Detector')
+st.title('Message Mood Detector')
 
-tweet = st.text_area('Input Twit:')
+
+tweet = st.text_input("Enter message here to define mood:")
 
 if tweet:
     processed = [' '.join(tweet.lower().split())]
     vectorized = vectorizer.transform(processed)
     prediction = model.predict(vectorized)[0]
-    print(prediction)
-    pred_translated = ''
+
     match prediction:
         case 0:
             pred_translated = 'negative'
@@ -23,4 +25,12 @@ if tweet:
             pred_translated = 'positive'
         case _:
             pred_translated = 'shit'
-    st.write(f"Mood: {pred_translated}")
+
+    probs = model.predict_proba(vectorized)[0]
+    st.write(f'Mood: {pred_translated}, Confidence: {max(probs) * 100:.2f}%')
+    
+
+
+
+
+
